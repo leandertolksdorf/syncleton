@@ -27,7 +27,8 @@ fun App() {
         fileDialog.mode = FileDialog.LOAD
         fileDialog.filenameFilter = FilenameFilter { _, name -> name.endsWith(".als") }
         fileDialog.isVisible = true
-        val newProject = Project(fileDialog.directory)
+        if (fileDialog.directory == null || fileDialog.file == null) return
+        val newProject = Project(fileDialog.directory + fileDialog.file)
         projects.add(newProject)
     }
 

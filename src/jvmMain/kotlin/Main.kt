@@ -5,33 +5,44 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import projects.Project
+import java.awt.FileDialog
+import java.awt.Frame
+import java.io.FilenameFilter
 
 @Composable
 @Preview
 fun App() {
-    var path by remember { mutableStateOf("") }
     val projects = remember { mutableStateListOf<Project>() }
+
+    fun addProject() {
+        val fileDialog = FileDialog(null as Frame?, "Add a new project")
+        fileDialog.mode = FileDialog.LOAD
+        fileDialog.filenameFilter = FilenameFilter { _, name -> name.endsWith(".als") }
+        fileDialog.isVisible = true
+        val newProject = Project(fileDialog.directory)
+        projects.add(newProject)
+    }
+
+    fun removeProject(at: Int) {
+        projects.removeAt(at)
+    }
 
     MaterialTheme {
         Column(modifier = Modifier.padding(8.dp)) {
-            TextField(value = path, onValueChange = { path = it }, label = { Text("New project (enter path):") })
-            Button(onClick = {
-                val newProject = Project(path)
-                projects.add(newProject)
-                path = ""
-            }) { Text("Add project") }
+            Button(onClick = { addProject() }) { Text("Add a new project") }
             for ((index, project) in projects.withIndex()) {
                 Row {
                     Text(project.path)
                     Button(onClick = {
-                        projects.removeAt(index)
+                        removeProject(index)
                     }) {
                         Text("Remove")
                     }

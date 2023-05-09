@@ -1,5 +1,9 @@
 package projects
 
+import java.util.UUID
+
 data class Project(
-    val path: String
+    val id: UUID,
+    val path: String,
+    val name: String
 )

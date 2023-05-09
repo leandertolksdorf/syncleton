@@ -5,6 +5,7 @@ import com.arkivanov.decompose.value.reduce
 import java.awt.FileDialog
 import java.awt.Frame
 import java.io.FilenameFilter
+import java.util.*
 
 class DefaultProjectsComponent : ProjectsComponent {
     override val model: MutableValue<ProjectsComponent.Model> =
@@ -17,7 +18,12 @@ class DefaultProjectsComponent : ProjectsComponent {
         fileDialog.isVisible = true
 
         if (fileDialog.directory == null || fileDialog.file == null) return
-        val newProject = Project(fileDialog.directory + fileDialog.file)
+        val newProject =
+            Project(
+                id = UUID.randomUUID(),
+                name = fileDialog.file.removeSuffix(".als"),
+                path = fileDialog.directory + fileDialog.file
+            )
         model.reduce { it.copy(projects = it.projects + listOf(newProject)) }
     }
 

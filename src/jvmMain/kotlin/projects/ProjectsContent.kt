@@ -19,7 +19,7 @@ fun ProjectsContent(component: ProjectsComponent) {
         Button(onClick = { component.addProject() }) { Text("Add a new project") }
         for ((index, project) in model.projects.withIndex()) {
             Row {
-                Text(project.path)
+                Text(project.name)
                 Button(onClick = {
                     component.removeProject(index)
                 }) {

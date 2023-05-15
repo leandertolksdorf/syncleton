@@ -7,9 +7,9 @@ import java.awt.Frame
 import java.io.FilenameFilter
 import java.util.*
 
-class DefaultProjectsComponent : ProjectsComponent {
-    override val model: MutableValue<ProjectsComponent.Model> =
-        MutableValue(ProjectsComponent.Model(projects = mutableListOf()))
+class DefaultProjectManagerComponent : ProjectManagerComponent {
+    override val model: MutableValue<ProjectManagerComponent.Model> =
+        MutableValue(ProjectManagerComponent.Model(projects = mutableListOf()))
 
     override fun addProject() {
         val fileDialog = FileDialog(null as Frame?, "Add a new project")

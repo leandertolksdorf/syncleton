@@ -1,34 +1,49 @@
 package projects
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import navigation.NavigationComponent
 import java.util.*
 
 @Composable
-fun ProjectManagerContent(component: ProjectManagerComponent, onProjectClicked: (uuid: UUID) -> Unit) {
-    val model by component.model.subscribeAsState()
+fun ProjectManagerContent(
+    projectManagerComponent: ProjectManagerComponent,
+    navigationComponent: NavigationComponent,
+    onProjectClicked: (uuid: UUID) -> Unit,
+) {
+    val projectManagerModel by projectManagerComponent.model.subscribeAsState()
+    val navigationModel by navigationComponent.model.subscribeAsState()
+    var menuExpanded by remember { mutableStateOf(false) }
 
-    Column {
-        Text("Syncleton", fontWeight = FontWeight.Bold)
-        Button(onClick = { component.addProject() }) { Text("Add a new project") }
-        for ((index, project) in model.projects.withIndex()) {
-            Row {
-                Text(project.name, modifier = Modifier.clickable { onProjectClicked(project.id) })
-                Button(onClick = {
-                    component.removeProject(index)
-                }) {
-                    Text("Remove")
+    val selectedProject = projectManagerModel.projects.find { navigationModel.selectedProject == it.id }
+
+    Column(modifier = Modifier.width(240.dp).fillMaxHeight().padding(16.dp)) {
+        Text("Syncleton", fontWeight = FontWeight.Medium, fontSize = 24.sp)
+        Spacer(Modifier.height(8.dp))
+        Box {
+            Button(modifier = Modifier.fillMaxWidth(), onClick = { menuExpanded = true }) {
+                Text(selectedProject?.name ?: "Select project")
+            }
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false }) {
+                DropdownMenuItem(onClick = { projectManagerComponent.addProject() }) {
+                    Text("Add project")
+                }
+                Divider()
+                for ((index, project) in projectManagerModel.projects.withIndex()) {
+                    DropdownMenuItem(onClick = { onProjectClicked(project.id) }) {
+                        Text(project.name)
+                    }
                 }
             }
         }
-
     }
+
 }
